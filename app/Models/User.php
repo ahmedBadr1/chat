@@ -4,6 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -19,7 +21,11 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'avatar',
         'password',
+        'email_verified_at',
+        'is_admin',
+        'blocked_at'
     ];
 
     /**
@@ -42,6 +48,26 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'boolean',
+            'blocked_at' => 'datetime',
         ];
     }
+
+    public function groups(): BelongsToMany
+    {
+        return $this->belongsToMany(Group::class,'group_user')->withTimestamps();
+    }
+
+    public function chats(): HasMany
+    {
+        return $this->hasMany(Chat::class);
+    }
+
+    public function sentMessages(): HasMany
+    {
+        return  $this->hasMany(Message::class,'sender_id');
+    }
+
+
+
 }

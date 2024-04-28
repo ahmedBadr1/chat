@@ -1,9 +1,9 @@
-# Chat System (Messenger Clone)
+# Chatty ( Messages and files Manager)
 <p>Laravel 11 & Reverb & React </p>
 
-- Simple, fast routing engine
+- Simple, robust stack
 
-powerful  real-time chat and file management for small and medium uses ; 
+powerful real-time chat and file management for small and medium uses ; 
 
 # Getting started
 
@@ -84,8 +84,8 @@ Run the database seeder and you're done
 
 **Accounts**
 
-    admin@chat.com  
-    user@chat.com
+    admin@chatty.com  
+    user@chatty.com
 
 You can now access the server at http://localhost:8000
 
