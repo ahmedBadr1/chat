@@ -37,9 +37,9 @@ class ConstantSeeder extends Seeder
             $groupUsers = array_unique(array_merge([$user], $randomUserIds));
             $group->users()->attach($groupUsers);
 
-            Message::factory(rand(2,10))->group($group->id,$user)->create();
+            Message::factory(rand(10,50))->group($group->id,$user)->create();
             $receiver = fake()->randomElement(array_diff($users, [$user]));
-            Message::factory(rand(2,10))->chat($user,$receiver)->create();
+            Message::factory(rand(10,50))->chat($user,$receiver)->create();
         }
 
 //        Emoji::factory(1000)->create();

@@ -15,6 +15,7 @@ class Group extends Model
 
     protected $fillable = ['name', 'description', 'owner_id','last_message_id'];
 
+
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class);

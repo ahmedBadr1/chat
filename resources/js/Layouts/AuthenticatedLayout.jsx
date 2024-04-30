@@ -1,15 +1,44 @@
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
-import { Link } from '@inertiajs/react';
+import {Link, usePage} from '@inertiajs/react';
 
-export default function Authenticated({ user, header, children }) {
+export default function Authenticated({ header, children }) {
+    const page = usePage();
+    const user = page.props.auth.user ;
+    const chats = page.props.chats ?? [] ;
+    console.log(chats);
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
 
+    useEffect(() => {
+        chats.forEach((chat)=> {
+            let channel = chat.is_group ? "message.group."+ chat.id :  "message.chat."+ chat.id;
+            console.log(channel);
+            Echo.private(channel).error((err) => console.log(err)).listen('SocketMessage',(e) => {
+                console.log(e)
+                // emit('message.created' , e.message);
+                if (e.message.sender_id === user.id){
+                    return ;
+                }
+                // emit('newMessageNotification',{
+                //    user: message.sender,
+                //    group_id : message.group_id ,
+                //    message: message.content || `Shared ${message.attachments.length === 1 ? "an attachment" : message.attachments.length + ' attachments'}`
+                // })
+            })
+        });
+        return () => {
+            chats.forEach((chat) => {
+                let channel = chat.is_group ? "message.group."+ chat.id :  "message.chat."+ chat.id;
+                Echo.leave(channel);
+            })
+        }
+    }, [chats]);
+
     return (
-        <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+        <div className=" bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col">
             <nav className="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
@@ -21,8 +50,8 @@ export default function Authenticated({ user, header, children }) {
                             </div>
 
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink href={route('dashboard')} active={route().current('dashboard')}>
-                                    Dashboard
+                                <NavLink href={route('home')} active={route().current('home')}>
+                                    Home
                                 </NavLink>
                             </div>
                         </div>
@@ -37,7 +66,6 @@ export default function Authenticated({ user, header, children }) {
                                                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150"
                                             >
                                                 {user.name}
-
                                                 <svg
                                                     className="ms-2 -me-0.5 h-4 w-4"
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -92,8 +120,8 @@ export default function Authenticated({ user, header, children }) {
 
                 <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden'}>
                     <div className="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
-                            Dashboard
+                        <ResponsiveNavLink href={route('home')} active={route().current('home')}>
+                            Home
                         </ResponsiveNavLink>
                     </div>
 
@@ -119,7 +147,7 @@ export default function Authenticated({ user, header, children }) {
                 </header>
             )}
 
-            <main>{children}</main>
+          {children}
         </div>
     );
 }
